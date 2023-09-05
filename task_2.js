@@ -1,12 +1,33 @@
 function promiseAllSettled(arr) {
-    return Promise.all(
-        arr.map(promise =>
-        promise.then(value => ({ status: 'fulfilled', value }))
-          .catch(reason => ({ status: 'rejected', reason }))
-      )
-    );
-  }
-  
+    return new Promise((resolve, reject) => {
+        const result = [];
+        let count = 0;
+
+        for (let i = 0; i < arr.length; i++) {
+            const promise = arr[i];
+
+            promise
+                .then(value => {
+                    result[i] = { status: 'fulfilled', value };
+                    count++;
+
+                    if (count === arr.length) {
+                        resolve(result);
+                    }
+
+                })
+                .catch(reason => {
+                    result[i] = { status: 'rejected', reason };
+                    count++
+                    if (count === arr.length) {
+                        resolve(result);
+                    }
+                })
+        }
+    })
+
+}
+
 
 
 const promises = [
